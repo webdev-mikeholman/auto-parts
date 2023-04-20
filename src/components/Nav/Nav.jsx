@@ -26,7 +26,7 @@ const Nav = () => {
 					</div>
 					<div className="item">
 						<Link className="link" to="/parts/2">
-							Motor Oil
+							Fluids
 						</Link>
 					</div>
 					<div className="item">
@@ -37,6 +37,16 @@ const Nav = () => {
 					<div className="item">
 						<Link className="link" to="/parts/4">
 							Wiper Blades
+						</Link>
+					</div>
+					<div className="item">
+						<Link className="link" to="/parts/5">
+							Tires
+						</Link>
+					</div>
+					<div className="item">
+						<Link className="link" to="/parts/6">
+							Lights
 						</Link>
 					</div>
 				</div>

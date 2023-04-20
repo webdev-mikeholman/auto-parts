@@ -14,11 +14,10 @@ const Slider = () => {
 		setCurrentSlide(currentSlide === 3 ? 0 : next => next + 1)
 	}
 
-	const data = ['/assets/images/parts/battery.jpg', '/assets/images/parts/brakes.jpg', '/assets/images/parts/oil.jpg', '/assets/images/parts/wipers.jpg']
+	const data = ['https://picsum.photos/1600/1067?random=1', 'https://picsum.photos/1600/1067?random=2', 'https://picsum.photos/1600/1067?random=3', 'https://picsum.photos/1600/1067?random=4']
 	return (
 		<div className="slider">
 			<div className="container" style={{ transform: `translateX(-${currentSlide * 100}vw)` }}>
-				{'// @TODO: change to map '}
 				<img src={data[0]} alt="part 1" />
 				<img src={data[1]} alt="part 2" />
 				<img src={data[2]} alt="part 3" />

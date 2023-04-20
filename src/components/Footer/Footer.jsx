@@ -7,9 +7,11 @@ const Footer = () => {
 				<div className="item">
 					<h1>Categories</h1>
 					<span>Brakes</span>
-					<span>Motor Oil</span>
+					<span>Fluids</span>
 					<span>Batteries</span>
 					<span>Wiper Blades</span>
+					<span>Tires</span>
+					<span>Lights</span>
 				</div>
 				<div className="item">
 					<h1>Links</h1>
