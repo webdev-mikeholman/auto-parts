@@ -4,9 +4,12 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import './Nav.scss'
+import Cart from '../Cart/Cart'
 
 const Nav = () => {
+	const [openCart, setOpenCart] = useState(false)
 	return (
 		<div className="nav">
 			<div className="wrapper">
@@ -80,13 +83,14 @@ const Nav = () => {
 						<SearchIcon />
 						<PersonOutlineIcon />
 						<FavoriteBorderIcon />
-						<div className="cartCounter">
+						<div className="cartCounter" onClick={() => setOpenCart(!openCart)}>
 							<ShoppingCartOutlinedIcon />
 							<span>0</span>
 						</div>
 					</div>
 				</div>
 			</div>
+			{openCart && <Cart />}
 		</div>
 	)
 }
