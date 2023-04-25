@@ -2,29 +2,37 @@ import { useParams } from 'react-router-dom'
 import { useState } from 'react'
 import List from '../../components/List/List'
 import './Parts.scss'
+import useFetch from '../../hooks/useFetch'
 
 const Parts = () => {
 	const catId = parseInt(useParams().id)
 	const [maxPrice, setMaxPrice] = useState(1000)
 	const [sort, setSort] = useState(null)
+	const [selectedSubCats, setSelectedSubCats] = useState([])
+
+	const { data, loading, error } = useFetch(`/sub-categories?[filters][categories][id]=${catId}`)
+
+	const handleChange = e => {
+		const val = e.target.value
+		const isChecked = e.target.checked
+		setSelectedSubCats(isChecked ? [...selectedSubCats, val] : selectedSubCats.filter(part => part !== val))
+	}
 
 	return (
 		<div className="parts">
 			<div className="left">
 				<div className="filterItem">
 					<h2>Part Categories</h2>
-					<div className="inputPart">
-						<input type="checkbox" name="brakes" id="brakes" value={'brakes'} />
-						<label htmlFor="brakes">Brakes</label>
-					</div>
-					<div className="inputPart">
-						<input type="checkbox" name="tires" id="tires" value={'tires'} />
-						<label htmlFor="tires">Tires</label>
-					</div>
-					<div className="inputPart">
-						<input type="checkbox" name="lights" id="lights" value={'lights'} />
-						<label htmlFor="lights">Lights</label>
-					</div>
+					{error
+						? 'Oops!'
+						: loading
+						? 'Loading...'
+						: data.map(item => (
+								<div className="inputPart" key={item.id}>
+									<input type="checkbox" name="brakes" id={item.id} value={item.id} onChange={handleChange} />
+									<label htmlFor={item.id}>{item.attributes.title}</label>
+								</div>
+						  ))}
 				</div>
 				<div className="filterItem">
 					<h2>Filter by price</h2>
@@ -48,7 +56,7 @@ const Parts = () => {
 			</div>
 			<div className="right">
 				<img className="categoryImage" src="https://picsum.photos/1600/1067?random=3" alt="" />
-				<List catId={catId} maxPrice={maxPrice} sort={sort} />
+				<List catId={catId} maxPrice={maxPrice} sort={sort} subCats={selectedSubCats} />
 			</div>
 		</div>
 	)
