@@ -5,11 +5,13 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import './Nav.scss'
 import Cart from '../Cart/Cart'
 
 const Nav = () => {
 	const [openCart, setOpenCart] = useState(false)
+	const parts = useSelector(state => state.cart.parts)
 	return (
 		<div className="nav">
 			<div className="wrapper">
@@ -85,7 +87,7 @@ const Nav = () => {
 						<FavoriteBorderIcon />
 						<div className="cartCounter" onClick={() => setOpenCart(!openCart)}>
 							<ShoppingCartOutlinedIcon />
-							<span>0</span>
+							<span>{parts.length}</span>
 						</div>
 					</div>
 				</div>

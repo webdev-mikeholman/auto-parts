@@ -1,51 +1,61 @@
+import { useSelector } from 'react-redux'
 import './Cart.scss'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
+import { useDispatch } from 'react-redux'
+import { removeItem, resetCart } from '../../redux/cartReducer'
+import { loadStripe } from '@stripe/stripe-js'
+import { makeRequest } from '../../makeRequest'
 
 const Cart = () => {
-	const data = [
-		{
-			id: 1,
-			img1: 'https://picsum.photos/1600?random=1',
-			img2: 'https://picsum.photos/1600?random=2',
-			title: 'Motor Oil',
-			isNew: true,
-			oldPrice: 50,
-			newPrice: 25,
-			description:
-				'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, nam dignissimos, veritatis a unde necessitatibus, consectetur dolorem nulla accusantium doloremque itaque aliquid id. Fugiat excepturi optio hic asperiores, rem reiciendis.'
-		},
-		{
-			id: 2,
-			img1: 'https://picsum.photos/1600?random=3',
-			img2: 'https://picsum.photos/1600?random=4',
-			title: 'Spark Plugs',
-			isNew: false,
-			oldPrice: 37,
-			newPrice: 32,
-			description:
-				'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla, et? Sunt distinctio voluptate facilis tempore cumque dolores, nostrum est architecto nisi mollitia id sequi officia, voluptatem accusamus nesciunt similique dolorem?'
+	const parts = useSelector(state => state.cart.parts)
+	const dispatch = useDispatch()
+
+	const totalPrice = () => {
+		let total = 0
+		parts.forEach(part => (total += part.newPrice * part.quantity))
+		return total.toFixed(2)
+	}
+
+	const handleCheckout = async () => {
+		try {
+			const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_KEY)
+			const stripe = await stripePromise
+			const res = await makeRequest.post('/orders', {
+				parts
+			})
+			dispatch(resetCart())
+			await stripe.redirectToCheckout({
+				sessionId: res.data.stripeSession.id
+			})
+		} catch (err) {
+			console.log(err)
 		}
-	]
+	}
+
 	return (
 		<div className="cart">
 			<h1>Parts in your cart</h1>
-			{data.map(item => (
+			{parts.map(item => (
 				<div className="item" key={item.id}>
-					<img src={item.img1} alt="" />
+					<img src={process.env.REACT_APP_IMAGE_URL + item.image1} alt="" />
 					<div className="details">
 						<h1>{item.title}</h1>
 						<p>{item.description.substring(0, 100)}</p>
-						<div className="price">{item.newPrice}</div>
+						<div className="price">
+							{item.quantity} x {item.newPrice}
+						</div>
 					</div>
-					<DeleteOutlinedIcon className="delete" />
+					<DeleteOutlinedIcon className="delete" onClick={() => dispatch(removeItem(item.id))} />
 				</div>
 			))}
 			<div className="total">
 				<span>SUBTOTAL</span>
-				<span>$59.99</span>
+				<span>${totalPrice()}</span>
 			</div>
-			<button>PROCEED TO CHECKOUT</button>
-			<span className="reset">Reset Cart</span>
+			<button onClick={handleCheckout}>PROCEED TO CHECKOUT</button>
+			<span className="reset" onClick={() => dispatch(resetCart())}>
+				Reset Cart
+			</span>
 		</div>
 	)
 }

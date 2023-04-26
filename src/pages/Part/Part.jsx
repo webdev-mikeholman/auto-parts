@@ -5,11 +5,14 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import BalanceIcon from '@mui/icons-material/Balance'
 import useFetch from '../../hooks/useFetch'
 import { useParams } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../redux/cartReducer'
 
 const Part = () => {
 	const id = useParams().id
 	const [selectedImage, setSelectedImage] = useState('image1')
 	const [quantity, setQuantity] = useState(1)
+	const dispatch = useDispatch()
 	const { data, loading, error } = useFetch(`/autoparts/${id}?populate=*`)
 
 	return (
@@ -18,7 +21,7 @@ const Part = () => {
 				'Oops!'
 			) : loading ? (
 				'Loading...'
-			) : (
+			) : data?.attributes ? (
 				<>
 					<div className="left">
 						<div className="images">
@@ -38,7 +41,21 @@ const Part = () => {
 							{quantity}
 							<button onClick={() => setQuantity(prev => prev + 1)}>+</button>
 						</div>
-						<button className="add">
+						<button
+							className="add"
+							onClick={() =>
+								dispatch(
+									addToCart({
+										id: data.id,
+										title: data.attributes.title,
+										description: data.attributes.description,
+										image1: data.attributes.image1.data.attributes.url,
+										newPrice: data.attributes.newPrice,
+										quantity
+									})
+								)
+							}
+						>
 							<AddShoppingCartIcon /> ADD TO CART
 						</button>
 						<div className="links">
@@ -64,6 +81,8 @@ const Part = () => {
 						</div>
 					</div>{' '}
 				</>
+			) : (
+				[]
 			)}
 		</div>
 	)
